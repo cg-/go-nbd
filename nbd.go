@@ -100,10 +100,14 @@ func (nbd *NBD) GetSize() int64 {
 	return nbd.size
 }
 
+// return path to the nbd
+func (nbd *NBD) GetName() string {
+	return nbd.nbd.Name()
+}
+
 // set the size of the NBD
 func (nbd *NBD) Size(size int64) (err error) {
 	if err = ioctl(nbd.nbd.Fd(), NBD_SET_BLKSIZE, 4096); err != nil {
-		fmt.Println(err.Error())
 		err = &os.PathError{nbd.nbd.Name(), "ioctl NBD_SET_BLKSIZE", err}
 	} else if err = ioctl(nbd.nbd.Fd(), NBD_SET_SIZE_BLOCKS, uintptr(size/4096)); err != nil {
 		err = &os.PathError{nbd.nbd.Name(), "ioctl NBD_SET_SIZE_BLOCKS", err}
