@@ -21,3 +21,8 @@ _testmain.go
 
 *.exe
 *.test
+
+connectorsetup/source
+connectorsetup/start.sh
+nbdsetup/start.sh
+

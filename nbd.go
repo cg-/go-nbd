@@ -103,6 +103,7 @@ func (nbd *NBD) GetSize() int64 {
 // set the size of the NBD
 func (nbd *NBD) Size(size int64) (err error) {
 	if err = ioctl(nbd.nbd.Fd(), NBD_SET_BLKSIZE, 4096); err != nil {
+		fmt.Println(err.Error())
 		err = &os.PathError{nbd.nbd.Name(), "ioctl NBD_SET_BLKSIZE", err}
 	} else if err = ioctl(nbd.nbd.Fd(), NBD_SET_SIZE_BLOCKS, uintptr(size/4096)); err != nil {
 		err = &os.PathError{nbd.nbd.Name(), "ioctl NBD_SET_SIZE_BLOCKS", err}
@@ -138,6 +139,13 @@ func (nbd *NBD) Connect() (dev string, err error) {
 				break // success
 			}
 		}
+	}
+
+	// make sure the nbd was created
+	if nbd.nbd == nil {
+		fmt.Println("Couldn't properly create the NBD.")
+		fmt.Println(nbd)
+		os.Exit(1)
 	}
 
 	// setup

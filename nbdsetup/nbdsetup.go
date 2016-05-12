@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/frostschutz/nbd"
+	"github.com/cg-/go-nbd"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 	device, err := os.Open(*file)
 	if *write {
 		fmt.Printf("-write")
-		device, err = os.OpenFile(*file, os.O_RDWR, os.FileMode(0666))
+		device, err = os.OpenFile(*file, os.O_RDWR, os.FileMode(0777))
 	}
 	fmt.Printf(" mode.\n")
 	if err != nil {
