@@ -1,12 +1,12 @@
 package nbd
 
 import (
+	"errors"
 	"fmt"
 	"os"
-  "errors"
-  "time"
-  "syscall"
-  "path/filepath"
+	"path/filepath"
+	"syscall"
+	"time"
 )
 
 const (
@@ -21,32 +21,32 @@ type NbdConnector struct {
 }
 
 func CreateNbdConnector(source, mountpoint string) (*NbdConnector, error) {
-  // open the source
+	// open the source
 	sourceFile, err := os.OpenFile(source, os.O_RDWR, os.FileMode(0777))
-  if err != nil {
-    return nil, errors.New("couldn't open source file")
-  }
+	if err != nil {
+		return nil, errors.New("couldn't open source file")
+	}
 
-  // check the destination mountpoint
-  _, err = os.Stat(mountpoint)
-  if os.IsNotExist(err) {
-    return nil, errors.New("mountpoint " + mountpoint + " doesn't exist")
-  }
+	// check the destination mountpoint
+	_, err = os.Stat(mountpoint)
+	if os.IsNotExist(err) {
+		return nil, errors.New("mountpoint " + mountpoint + " doesn't exist")
+	}
 
 	stat, _ := sourceFile.Stat()
 	dev := Create(sourceFile, stat.Size())
 
-  go dev.Connect()
-  time.Sleep(1 * time.Second)
+	go dev.Connect()
+	time.Sleep(1 * time.Second)
 
 	emu := dev.GetName()
-  mountpointAbs, err := filepath.Abs(mountpoint)
+	mountpointAbs, err := filepath.Abs(mountpoint)
 
 	return &NbdConnector{dev, sourceFile, emu, mountpointAbs}, nil
 }
 
 func (nbdcon *NbdConnector) Mount() error {
-  err := syscall.Mount(nbdcon.emunbd, nbdcon.mountpoint, "ext3", 0, "") != nil
+	err := syscall.Mount(nbdcon.emunbd, nbdcon.mountpoint, "ext3", 0, "") != nil
 	if err == true {
 		return errors.New("Couldn't mount")
 	}
@@ -54,7 +54,7 @@ func (nbdcon *NbdConnector) Mount() error {
 }
 
 func (nbdcon *NbdConnector) Unmount() error {
-  err := syscall.Unmount(nbdcon.mountpoint, 0) != nil
+	err := syscall.Unmount(nbdcon.mountpoint, 0) != nil
 	if err == true {
 		return errors.New("Couldn't unmount")
 	}
@@ -66,8 +66,8 @@ func (nbdcon *NbdConnector) Remount() {
 	nbdcon.Mount()
 }
 
-func (nbdcon *NbdConnector) Dump() string{
-  return fmt.Sprintf("nbd: [%s] emunbd: [%s] source: [%s] mountpoint: [%s]", nbdcon.nbd, nbdcon.emunbd, nbdcon.source, nbdcon.mountpoint)
+func (nbdcon *NbdConnector) Dump() string {
+	return fmt.Sprintf("nbd: [%s] emunbd: [%s] source: [%s] mountpoint: [%s]", nbdcon.nbd, nbdcon.emunbd, nbdcon.source, nbdcon.mountpoint)
 }
 
 func log(msg string) {
