@@ -18,7 +18,6 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	fmt.Println("Mounted")
 	asd.Mount()
 	time.Sleep(5 * time.Second)
