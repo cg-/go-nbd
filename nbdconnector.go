@@ -30,7 +30,7 @@ func CreateNbdConnector(source, mountpoint string) (*NbdConnector, error) {
   // check the destination mountpoint
   _, err = os.Stat(mountpoint)
   if os.IsNotExist(err) {
-    return nil, errors.New("mountpoint doesn't exist")
+    return nil, errors.New("mountpoint " + mountpoint + " doesn't exist")
   }
 
 	stat, _ := sourceFile.Stat()
@@ -59,6 +59,11 @@ func (nbdcon *NbdConnector) Unmount() error {
 		return errors.New("Couldn't unmount")
 	}
 	return nil
+}
+
+func (nbdcon *NbdConnector) Remount() {
+	nbdcon.Unmount()
+	nbdcon.Mount()
 }
 
 func (nbdcon *NbdConnector) Dump() string{
