@@ -46,7 +46,7 @@ func CreateNbdConnector(source, mountpoint string) (*NbdConnector, error) {
 }
 
 func (nbdcon *NbdConnector) Mount() error {
-	err := syscall.Mount(nbdcon.emunbd, nbdcon.mountpoint, "ext3", 0, "") != nil
+	err := syscall.Mount(nbdcon.emunbd, nbdcon.mountpoint, "ext2", 0, "") != nil
 	if err == true {
 		return errors.New("Couldn't mount")
 	}
